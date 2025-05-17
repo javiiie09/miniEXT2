@@ -88,23 +88,21 @@ static int minifs_getattr(const char *path, struct stat *st) {
 
 // FUSE: Leer directorio
 static int minifs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
-                          off_t offset, struct fuse_file_info *fi,
-                          enum fuse_readdir_flags flags) {
+                          off_t offset, struct fuse_file_info *fi) {
     (void)offset;
     (void)fi;
-    (void)flags;
 
     if (strcmp(path, "/") != 0) return -ENOENT;
 
-    filler(buf, ".", NULL, 0, 0);
-    filler(buf, "..", NULL, 0, 0);
+    filler(buf, ".", NULL, 0);
+    filler(buf, "..", NULL, 0);
 
     struct inode *root = get_inode(0);
     int entries = root->size / sizeof(struct dir_entry);
     struct dir_entry *entries_ptr = (struct dir_entry *)get_block(root->direct[0]);
 
     for (int i = 0; i < entries; i++) {
-        filler(buf, entries_ptr[i].name, NULL, 0, 0);
+        filler(buf, entries_ptr[i].name, NULL, 0);
     }
 
     return 0;
@@ -272,7 +270,7 @@ static struct fuse_operations minifs_oper = {
 
 // main
 int main(int argc, char *argv[]) {
-    int fd = open("imagen.bin", O_RDWR);
+    int fd = open("imagen", O_RDWR);
     if (fd < 0) {
         perror("Error al abrir imagen.bin");
         return 1;

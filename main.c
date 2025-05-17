@@ -44,7 +44,7 @@ struct dir_entry {
 #pragma pack(pop)
 
 int main() {
-    FILE *f = fopen("imagen.bin", "wb");
+    FILE *f = fopen("imagen", "wb");
     if (!f) {
         perror("fopen");
         return 1;
